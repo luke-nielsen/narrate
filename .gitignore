@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[codz]
+*.egg-info/
+dist/
+build/
+
+# Environments
+.venv/
+.env
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Narrate runtime state (never commit a live data dir)
+.narrate/
+example-output/
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store

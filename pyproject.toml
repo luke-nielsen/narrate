@@ -1,0 +1,147 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "narrate"
+version = "0.1.0"
+description = "AI-native documentation orchestration platform: AI agents generate docs, videos, and slides through deterministic MCP tools."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.13"
+authors = [{ name = "Narrate Contributors" }]
+keywords = [
+  "documentation",
+  "mcp",
+  "model-context-protocol",
+  "ai",
+  "orchestration",
+  "remotion",
+  "docs-as-code",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Documentation",
+  "Topic :: Software Development :: Documentation",
+  "Typing :: Typed",
+]
+dependencies = [
+  "mcp>=1.2.0",
+  "pydantic>=2.10",
+  "pydantic-settings>=2.7",
+  "sqlalchemy>=2.0.36",
+  "typer>=0.15",
+]
+
+[project.optional-dependencies]
+pptx = ["python-pptx>=1.0"]
+media = ["pillow>=11.0"]
+all = ["narrate[pptx,media]"]
+
+[project.urls]
+Homepage = "https://github.com/luke-nielsen/narrate"
+Documentation = "https://github.com/luke-nielsen/narrate/tree/main/docs"
+Issues = "https://github.com/luke-nielsen/narrate/issues"
+Changelog = "https://github.com/luke-nielsen/narrate/blob/main/CHANGELOG.md"
+
+[project.scripts]
+narrate = "narrate.cli.main:app"
+
+[project.entry-points."narrate.renderers"]
+markdown = "narrate.rendering.builtin.markdown:MarkdownRenderer"
+script = "narrate.rendering.builtin.script:ScriptRenderer"
+transcript = "narrate.rendering.builtin.transcript:TranscriptRenderer"
+subtitles = "narrate.rendering.builtin.subtitles:SubtitleRenderer"
+html_slides = "narrate.rendering.builtin.html_slides:HtmlSlidesRenderer"
+remotion_video = "narrate.rendering.builtin.remotion:RemotionRenderer"
+pptx = "narrate.rendering.builtin.pptx:PptxRenderer"
+gif = "narrate.rendering.builtin.gif:GifRenderer"
+thumbnail = "narrate.rendering.builtin.thumbnail:ThumbnailRenderer"
+
+[project.entry-points."narrate.publishers"]
+filesystem = "narrate.publishing.builtin.filesystem:FileSystemPublisher"
+static_site = "narrate.publishing.builtin.static_site:StaticSitePublisher"
+webhook = "narrate.publishing.builtin.webhook:WebhookPublisher"
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3",
+  "pytest-cov>=6.0",
+  "ruff>=0.9",
+  "pyright>=1.1.392",
+  "python-pptx>=1.0",
+  "pillow>=11.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/narrate"]
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+  "E",    # pycodestyle errors
+  "W",    # pycodestyle warnings
+  "F",    # pyflakes
+  "I",    # isort
+  "B",    # flake8-bugbear
+  "C4",   # flake8-comprehensions
+  "UP",   # pyupgrade
+  "SIM",  # flake8-simplify
+  "RUF",  # ruff-specific
+  "D",    # pydocstyle
+  "ANN",  # flake8-annotations
+  "PTH",  # flake8-use-pathlib
+]
+ignore = [
+  "D203", # incompatible with D211
+  "D213", # incompatible with D212
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "ANN"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.pyright]
+pythonVersion = "3.13"
+include = ["src", "tests"]
+typeCheckingMode = "strict"
+reportMissingTypeStubs = false
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+reportUnknownParameterType = false
+reportUnknownLambdaType = false
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+  "integration: end-to-end tests exercising multiple layers together",
+]
+
+[tool.coverage.run]
+source = ["narrate"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+  "@abstractmethod",
+]
